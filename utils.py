@@ -12,8 +12,8 @@ class HH_employer():
 
 
     def load_employer(self, url=None):
-        """Метод вытаскивает вакансии по ключевому
-        слову вакансии (только по России) и складывает в json"""
+        """Метод вытаскивает работодателя по employer_id (только по России)
+         и складывает в отдельный json для каждого работодателя"""
         url = 'https://api.hh.ru/vacancies?area=113'
         params = {
             'page': 0,
@@ -25,30 +25,45 @@ class HH_employer():
             json.dump(data, file, sort_keys=True, indent=4, ensure_ascii=False)
         return data
 
+
+    # print(data)
+
+
+def create_class_from_json():
+    with open('data/Employers.json', 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        for key, value in data.items():
+            # return HH_employer({key}, {value})
+            # print(f'{key} = HH_employer('{key}', '{value}')')
+            # print(f'HH_employer({key}, {value})')
+            print(f"Ключ: {key}, Значение: {value}")
+
+
+
 if __name__ == "__main__":
-    Yandex = HH_employer('Yandex', '1740')
-    VK = HH_employer('VK', '15478')
-    Rosteh = HH_employer('Rosteh', '4986323')
-    Tbank = HH_employer('Tbank', '78638')
-    Sberbank = HH_employer('Sberbank', '3529')
-    Rostelecom = HH_employer('Rostelecom', '2748')
-    MTS = HH_employer('MTS', '3776')
-    Kaspersky = HH_employer('Kaspersky', '1057')
-    Avito = HH_employer('Avito', '84585')
-    Ozon = HH_employer('Ozon', '2180')
+    # Yandex = HH_employer('Yandex', '1740')
+    # VK = HH_employer('VK', '15478')
+    # Rosteh = HH_employer('Rosteh', '4986323')
+    # Tbank = HH_employer('Tbank', '78638')
+    # Sberbank = HH_employer('Sberbank', '3529')
+    # Rostelecom = HH_employer('Rostelecom', '2748')
+    # MTS = HH_employer('MTS', '3776')
+    # Kaspersky = HH_employer('Kaspersky', '1057')
+    # Avito = HH_employer('Avito', '84585')
+    # Ozon = HH_employer('Ozon', '2180')
+    #
+    # Yandex.load_employer()
+    # VK.load_employer()
+    # Rosteh.load_employer()
+    # Tbank.load_employer()
+    # Sberbank.load_employer()
+    # Rostelecom.load_employer()
+    # MTS.load_employer()
+    # Kaspersky.load_employer()
+    # Avito.load_employer()
+    # Ozon.load_employer()
 
-    Yandex.load_employer()
-    VK.load_employer()
-    Rosteh.load_employer()
-    Tbank.load_employer()
-    Sberbank.load_employer()
-    Rostelecom.load_employer()
-    MTS.load_employer()
-    Kaspersky.load_employer()
-    Avito.load_employer()
-    Ozon.load_employer()
-
-
-
+    create_class_from_json()
+    # create_class_from_json().load_employer()
 
 

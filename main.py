@@ -1,9 +1,11 @@
-from utils import HH
-
-def use_emp_list():
-    emp_list =
+from utils import HH_employer
+import json
 
 
-hh = HH('Яндекс')
 
-hh.load_employeers()
+
+
+
+
+create_class_from_json(data)
+
