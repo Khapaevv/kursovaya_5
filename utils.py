@@ -1,46 +1,60 @@
-import requests
 import json
+import psycopg2
 
 
 
-class HH_employer():
-    """Класс для работы с API HeadHunter России"""
-
-    def __init__(self, employer_name, employer_id):
-        self.employer_name = employer_name
-        self.employer_id = employer_id
-
-
-    def load_employer(self, url=None):
-        """Метод вытаскивает работодателя по employer_id (только по России)
-         и складывает в отдельный json для каждого работодателя"""
-        url = 'https://api.hh.ru/vacancies?area=113'
-        params = {
-            'page': 0,
-            'per_page': 100
-        }
-        response = requests.get(f'{url}&employer_id={self.employer_id}', params)
-        data = response.json()
-        with open(f"./data/{self.employer_name}_employer.json", "w", encoding='utf-8') as file:
-            json.dump(data, file, sort_keys=True, indent=4, ensure_ascii=False)
-        return data
-
-
-    # print(data)
-
-
-def create_class_from_json():
-    with open('data/Employers.json', 'r', encoding='utf-8') as file:
-        data = json.load(file)
-        for key, value in data.items():
-            # return HH_employer({key}, {value})
-            # print(f'{key} = HH_employer('{key}', '{value}')')
-            # print(f'HH_employer({key}, {value})')
-            print(f"Ключ: {key}, Значение: {value}")
 
 
 
-if __name__ == "__main__":
+def create_database():
+    """Создание базы данных и таблиц для сохранения данных о работодателях и вакансиях."""
+
+    conn = psycopg2.connect(
+        host='localhost',
+        database='KR_5',
+        user='postgres',
+        password='Py091105'
+    )
+
+    # conn.autocommit = True
+    cur = conn.cursor()
+
+    cur.execute("DROP TABLE employers CASCADE")
+    # cur.execute(f"CREATE DATABASE KR_5")
+    conn.commit()
+    conn.close()
+
+#     conn = psycopg2.connect(host='localhost', database='KR_5', user='postgres', password='Py091105')
+#
+#     with conn.cursor() as cur:
+#         cur.execute("""
+#                     CREATE TABLE employers
+#                     (
+#                         id SERIAL,
+#                         employer_id int PRIMARY KEY,
+#                         employer_name VARCHAR(255) NOT NULL,
+#                         employer_url TEXT
+#                     )
+#                     """)
+#
+#     with conn.cursor() as cur:
+#         cur.execute("""
+#             CREATE TABLE videos (
+#                 video_id SERIAL PRIMARY KEY,
+#                 channel_id INT REFERENCES channels(channel_id),
+#                 title VARCHAR NOT NULL,
+#                 publish_date DATE,
+#                 video_url TEXT
+#             )
+#         """)
+#
+#     conn.commit()
+#     conn.close()
+
+
+
+# if __name__ == "__main__":
+    # create_database()
     # Yandex = HH_employer('Yandex', '1740')
     # VK = HH_employer('VK', '15478')
     # Rosteh = HH_employer('Rosteh', '4986323')
@@ -51,7 +65,7 @@ if __name__ == "__main__":
     # Kaspersky = HH_employer('Kaspersky', '1057')
     # Avito = HH_employer('Avito', '84585')
     # Ozon = HH_employer('Ozon', '2180')
-    #
+
     # Yandex.load_employer()
     # VK.load_employer()
     # Rosteh.load_employer()
@@ -62,8 +76,8 @@ if __name__ == "__main__":
     # Kaspersky.load_employer()
     # Avito.load_employer()
     # Ozon.load_employer()
-
-    create_class_from_json()
+    #
+    # create_class_from_json()
     # create_class_from_json().load_employer()
 
 
