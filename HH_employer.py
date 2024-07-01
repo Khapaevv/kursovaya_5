@@ -39,9 +39,7 @@ def create_class_from_json():
         for employer_name, employer_id in data.items():
             HH_employer(f"{employer_name}", f"{employer_id}").load_employer()
 
-            # Создаем экземпляр класса HH_employer
-            # print(HH_employer(f"{employer_name}", f"{employer_id}").__repr__())
-            # return HH_employer(f"{employer_name}", f"{employer_id}").load_employer()
+
 
 
 
