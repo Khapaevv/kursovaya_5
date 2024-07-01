@@ -37,6 +37,16 @@ def create_tables():
     conn.commit()
     conn.close()
 
+def fill_tables():
+    """Наполнение таблиц из json файлов каждого работодателя"""
+
+    conn = psycopg2.connect(host='localhost', database='KR_5', user='postgres', password='Py091105')
+
+
+
+
+
+
 # if __name__ == "__main__":
 # create_database()
 # Yandex = HH_employer('Yandex', '1740')

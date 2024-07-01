@@ -27,13 +27,13 @@ class HH_employer():
         }
         response = requests.get(f'{url}&employer_id={self.employer_id}', params)
         data = response.json()
-        with open(f"./data/{self.employer_name}_employer.json", "w", encoding='utf-8') as file:
+        with open(f"./data/Employers/{self.employer_name}_employer.json", "w", encoding='utf-8') as file:
             json.dump(data, file, sort_keys=True, indent=4, ensure_ascii=False)
         return data
 
 
 def create_class_from_json():
-    """Создает экземпляры класса HH_employer из Employers.json и сразу использует load_employer()"""
+    """Создает экземпляры класса HH_employer из Employers.json и использует load_employer()"""
     with open('data/Employers.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
         for employer_name, employer_id in data.items():
@@ -43,9 +43,9 @@ def create_class_from_json():
 
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # create_class_from_json()
-    create_class_from_json()
+    # create_class_from_json()
     # Yandex = HH_employer('Yandex', '1740')
     # print(Yandex.__repr__())
     # VK = HH_employer('VK', '15478')
