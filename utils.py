@@ -1,74 +1,104 @@
+import requests
 import psycopg2
+import json
 
 
-def create_tables():
-    """Создание таблиц для сохранения данных о работодателях и вакансиях."""
+def create_table_employers():
+    """Создание таблиц для сохранения данных о работодателях."""
     conn = psycopg2.connect(host='localhost', database='KR_5', user='postgres', password='Py091105')
-
     with conn.cursor() as cur:
         cur.execute("""
                     CREATE TABLE IF NOT EXISTS employers 
                     (
                         employer_id int, 
-                        employer_name VARCHAR(255) NOT NULL, 
-                        employer_url TEXT,
-        
+                        employer_name VARCHAR(255) NOT NULL,
+                        
                         CONSTRAINT pk_employer_id PRIMARY KEY (employer_id)
                     );
                     """)
-
-    with conn.cursor() as cur:
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS vacancies
-            (
-                vacancy_id SERIAL,
-                vac_hh_id int,
-                employer_id int NOT NULL,
-                vacancy_name VARCHAR(255) NOT NULL,
-                vacancy_url TEXT,
-                salary int,
-                currency VARCHAR(3),
-                schedule VARCHAR(255),
-                
-                CONSTRAINT pk_vacancies_vacancy_id PRIMARY KEY (vacancy_id)
-            );
-            ALTER TABLE vacancies ADD CONSTRAINT fk_vacancies_employers FOREIGN KEY(employer_id) REFERENCES employers(employer_id);
-        """)
-
         conn.commit()
     conn.close()
 
-def fill_tables():
-    """Наполнение таблиц из json файлов каждого работодателя"""
 
+def create_table_vacancies():
+    """Создание таблицs для сохранения данных о вакансиях."""
     conn = psycopg2.connect(host='localhost', database='KR_5', user='postgres', password='Py091105')
+    with conn.cursor() as cur:
+        # cur.execute("ALTER TABLE vacancies DROP CONSTRAINT fk_vacancies_employers;")
+        cur.execute("""
+                    CREATE TABLE IF NOT EXISTS vacancies
+                    (
+                        vacancy_id SERIAL,
+                        vac_hh_id int,
+                        employer_id int NOT NULL,
+                        vacancy_name VARCHAR(255) NOT NULL,
+                        vacancy_url TEXT,
+                        salary int,
+                        schedule VARCHAR(255),
+        
+                        CONSTRAINT pk_vacancies_vacancy_id PRIMARY KEY (vacancy_id)
+                    );
+        """)
+        conn.commit()
+    conn.close()
 
+
+def load_table_employers():
+    """Наполнение таблицы о работодателях из файла Employers.json."""
+    with open('data/Employers.json', 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    conn = psycopg2.connect(host='localhost', database='KR_5', user='postgres', password='Py091105')
+    with conn.cursor() as cur:
+        for emp, emp_id in data.items():
+            cur.execute(
+                'INSERT INTO employers (employer_id, employer_name)'
+                'VALUES (%s, %s)', (emp_id, emp))
+            conn.commit()
+        conn.close()
+
+
+def load_table_vacancy(employer_id, url=None):
+    """Получение данных с Хед Хантер и наполнение таблицы вакансиями по employer_id."""
+    url = 'https://api.hh.ru/vacancies?area=113'
+    params = {
+        'page': 5,
+        'per_page': 100
+    }
+    response = requests.get(f'{url}&employer_id={employer_id}', params)
+    data = response.json()
+    conn = psycopg2.connect(host='localhost', database='KR_5', user='postgres', password='Py091105')
+    with conn.cursor() as cur:
+        for vac in data['items']:
+            # print(vac)
+            # print()
+            vac_hh_id = vac['id']
+            epm_id = vac['employer']['id']
+            vac_name = vac.get('name')
+            vac_url = vac.get('alternate_url')
+            vac_salary = vac.get('salary')
+            if vac_salary:
+                if vac_salary.get("from") and not vac_salary.get("to"):
+                    vac_salary = vac_salary.get("from")
+                elif not vac_salary.get("from") and vac_salary.get("to"):
+                    vac_salary = vac_salary.get("to")
+                elif vac_salary.get("from") and vac_salary.get("to"):
+                    vac_salary = int((vac_salary.get("from") + vac_salary.get("to")) / 2)
+                elif not vac_salary.get("from") and not vac_salary.get("to"):
+                    vac_salary = 0
+            else:
+                vac_salary = 0
+            vac_schedule = vac['schedule']['name']
+            cur.execute(
+                'INSERT INTO vacancies (vac_hh_id, employer_id, vacancy_name, vacancy_url, salary, schedule)'
+                'VALUES (%s, %s, %s, %s, %s, %s)', (vac_hh_id, epm_id, vac_name, vac_url, vac_salary, vac_schedule))
+            conn.commit()
+        conn.close()
 
 
 if __name__ == "__main__":
-    create_tables()
-# create_database()
-# Yandex = HH_employer('Yandex', '1740')
-# VK = HH_employer('VK', '15478')
-# Rosteh = HH_employer('Rosteh', '4986323')
-# Tbank = HH_employer('Tbank', '78638')
-# Sberbank = HH_employer('Sberbank', '3529')
-# Rostelecom = HH_employer('Rostelecom', '2748')
-# MTS = HH_employer('MTS', '3776')
-# Kaspersky = HH_employer('Kaspersky', '1057')
-# Avito = HH_employer('Avito', '84585')
-# Ozon = HH_employer('Ozon', '2180')
+    create_table_employers()
+    create_table_vacancies()
+    load_table_employers()
+    load_table_vacancy('1740')
 
-# Yandex.load_employer()
-# VK.load_employer()
-# Rosteh.load_employer()
-# Tbank.load_employer()
-# Sberbank.load_employer()
-# Rostelecom.load_employer()
-# MTS.load_employer()
-# Kaspersky.load_employer()
-# Avito.load_employer()
-# Ozon.load_employer()
-#
-# create_class_from_json()
-# create_class_from_json().load_employer()
+
