@@ -22,12 +22,13 @@ def create_tables():
             CREATE TABLE IF NOT EXISTS vacancies
             (
                 vacancy_id SERIAL,
+                vac_hh_id int,
                 employer_id int NOT NULL,
                 vacancy_name VARCHAR(255) NOT NULL,
                 vacancy_url TEXT,
                 salary int,
                 currency VARCHAR(3),
-                shedule VARCHAR(255),
+                schedule VARCHAR(255),
                 
                 CONSTRAINT pk_vacancies_vacancy_id PRIMARY KEY (vacancy_id)
             );
