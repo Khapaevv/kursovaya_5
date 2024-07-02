@@ -34,7 +34,7 @@ def create_tables():
             ALTER TABLE vacancies ADD CONSTRAINT fk_vacancies_employers FOREIGN KEY(employer_id) REFERENCES employers(employer_id);
         """)
 
-    conn.commit()
+        conn.commit()
     conn.close()
 
 def fill_tables():
@@ -44,10 +44,8 @@ def fill_tables():
 
 
 
-
-
-
-# if __name__ == "__main__":
+if __name__ == "__main__":
+    create_tables()
 # create_database()
 # Yandex = HH_employer('Yandex', '1740')
 # VK = HH_employer('VK', '15478')

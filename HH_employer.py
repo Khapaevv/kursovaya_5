@@ -43,8 +43,8 @@ def create_class_from_json():
 
 
 
-# if __name__ == "__main__":
-    # create_class_from_json()
+if __name__ == "__main__":
+    create_class_from_json()
     # create_class_from_json()
     # Yandex = HH_employer('Yandex', '1740')
     # print(Yandex.__repr__())
