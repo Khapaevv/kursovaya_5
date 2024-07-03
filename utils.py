@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 
 def create_table_employers():
-    """Создание таблиц для сохранения данных о работодателях."""
+    """Создание таблицы для сохранения данных о работодателях."""
     conn = psycopg2.connect(host='localhost', database='KR_5', user='postgres', password='Py091105')
     with conn.cursor() as cur:
         cur.execute("""
