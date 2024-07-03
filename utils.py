@@ -20,10 +20,9 @@ def create_table_employers():
 
 
 def create_table_vacancies():
-    """Создание таблицs для сохранения данных о вакансиях."""
+    """Создание таблицы для сохранения данных о вакансиях."""
     conn = psycopg2.connect(host='localhost', database='KR_5', user='postgres', password='Py091105')
     with conn.cursor() as cur:
-        # cur.execute("ALTER TABLE vacancies DROP CONSTRAINT fk_vacancies_employers;")
         cur.execute("""
                     CREATE TABLE IF NOT EXISTS vacancies
                     (
@@ -57,18 +56,20 @@ def load_table_employers():
 
 
 def load_table_vacancy(url=None):
-    """Получение данных с Хед Хантер и наполнение таблицы вакансиями по employer_id."""
+    """Получение данных с Хед Хантер и наполнение таблицы вакансиями путем перебора employer_id из Employers.json."""
     with open('data/Employers.json', 'r', encoding='utf-8') as file:
         emp_data = json.load(file)
         for emp, employer_id in emp_data.items():
-            time.sleep(5)
+            time.sleep(6)
             url = 'https://api.hh.ru/vacancies?area=113'
             params = {
+                'pages': 20,
                 'page': 1,
                 'per_page': 100
             }
             response = requests.get(f'{url}&employer_id={employer_id}', params)
             data = response.json()
+            print(data)
             conn = psycopg2.connect(host='localhost', database='KR_5', user='postgres', password='Py091105')
             with conn.cursor() as cur:
                 for vac in data['items']:
@@ -98,10 +99,10 @@ def load_table_vacancy(url=None):
                 conn.close()
 
 
-# if __name__ == "__main__":
-#     create_table_employers()
-#     create_table_vacancies()
-#     load_table_employers()
-#     load_table_vacancy()
+if __name__ == "__main__":
+    create_table_employers()
+    create_table_vacancies()
+    load_table_employers()
+    load_table_vacancy()
 
 
