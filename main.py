@@ -1,32 +1,63 @@
-import json
-from utils import create_table_employers, create_table_vacancies, load_table_employers, load_table_vacancy
-
+from utils import *
+from config import config
+from DBManager import DBManager
 
 def main():
-    print("Привет дорогой друг!")
-    start_word = input("Если хочешь начать - введи 'Поехали'\n")
-    start_word_lower = start_word.lower()
-    if start_word_lower == "поехали":
-        print("Я отобрал и сохранил для тебя 10 лучших IT компаний, с ними мы и будем работать")
-        print("")
+    print("Здравствуйте!")
+    start_word = input("Для того, чтобы начать - введите (да/нет): \n").lower()
+    if start_word == 'да':
+        print("Я отобрал и сохранил для Вас 10 интересных компаний, с ними мы и будем работать")
+        print("Вам необходимо в файл database.ini ввести данные для подключения к Вашему postgresql")
+        params = config()
+        database_name = input("Введите название базы данных: ")
+        create_database(database_name, params)
+        print("В базе данных создаем таблицы employers и vacancies")
+        create_table_employers(database_name, params)
+        create_table_vacancies(database_name, params)
+        print("Наполняем таблицы данными, придется подождать :)")
+        load_table_employers(database_name, params)
+        load_table_vacancies(database_name, params)
+        print("Спасибо за ожидание, наполнение прошло успешно")
+        print("Хотите получить список всех компаний и количество вакансий у каждой компании?")
+        key = input("Если да, то введите (да/нет): \n").lower()
+        if key == "да":
+            dbmanager = DBManager(database_name, params)
+            print(dbmanager.get_companies_and_vacancies_count())
+        else:
+            print("Может нужно узнать что-то другое?")
+        print("Хотите получить список вакансий с указанием названия компании, зарплаты и ссылки на вакансию?")
+        key_2 = input("Если да, то введите (да/нет): \n").lower()
+        if key_2 == "да":
+            dbmanager = DBManager(database_name, params)
+            print(dbmanager.get_all_vacancies())
+        else:
+            print("Может нужно узнать что-то другое?")
+        print("Хотите получить среднюю зарплату по вакансиям?")
+        key_3 = input("Если да, то введите (да/нет): \n").lower()
+        if key_3 == "да":
+            dbmanager = DBManager(database_name, params)
+            print(dbmanager.get_avg_salary())
+        else:
+            print("Может нужно узнать что-то другое?")
+        print("Хотите получить список всех вакансий,у которых зарплата выше средней по всем вакансиям?")
+        key_4 = input("Если да, то введите (да/нет): \n").lower()
+        if key_4 == "да":
+            dbmanager = DBManager(database_name, params)
+            print(dbmanager.get_vacancies_with_higher_salary())
+        else:
+            print("Может нужно узнать что-то другое?")
+        print("Хотите получить список всех вакансий,в названии которых содержатся переданные в метод слова?")
+        key_5 = input("Если да, то введите (да/нет): \n").lower()
+        if key_5 == "да":
+            dbmanager = DBManager(database_name, params)
+            print(dbmanager.get_vacancies_with_keyword())
+        else:
+            print("На этом все!")
     else:
-        print("Не верно, начинай с начала")
-    # # Создание таблицы для сохранения данных о работодателях.
-    # create_table_employers()
-    # # Создание таблицы для сохранения данных о вакансиях.
-    # create_table_vacancies()
-    # # Наполнение таблицы о работодателях из файла Employers.json.
-    # load_table_employers()
-    # # Получение данных с Хед Хантер и наполнение таблицы вакансиями путем перебора employer_id из Employers.json.
-    # load_table_vacancy()
-
+        print("Не верно, начнайте все с начала")
 
 
 if __name__ == "__main__":
     main()
-    # create_table_employers()
-    # create_table_vacancies()
-    # load_table_employers()
-    # load_table_vacancy()
 
 
