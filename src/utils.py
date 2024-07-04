@@ -60,7 +60,7 @@ def create_table_vacancies(database_name, params: dict):
 
 def load_table_employers(database_name, params: dict):
     """Наполнение таблицы о работодателях из файла Employers.json."""
-    with open('data/Employers.json', 'r', encoding='utf-8') as file:
+    with open('./data/Employers.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
     conn = psycopg2.connect(f'dbname={database_name}', **params)
     with conn.cursor() as cur:

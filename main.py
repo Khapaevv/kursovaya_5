@@ -1,6 +1,6 @@
-from utils import *
+from src.utils import *
 from config import config
-from DBManager import DBManager
+from src.DBManager import DBManager
 
 def main():
     print("Здравствуйте!")
@@ -9,7 +9,7 @@ def main():
         print("Я отобрал и сохранил для Вас 10 интересных компаний, с ними мы и будем работать")
         print("Вам необходимо в файл database.ini ввести данные для подключения к Вашему postgresql")
         params = config()
-        database_name = input("Введите название базы данных: ")
+        database_name = input("Если изменили database.ini, то введите название базы данных: ")
         create_database(database_name, params)
         print("В базе данных создаем таблицы employers и vacancies")
         create_table_employers(database_name, params)
