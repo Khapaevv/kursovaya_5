@@ -1,3 +1,4 @@
+import data
 import requests
 import psycopg2
 import json
@@ -58,18 +59,34 @@ def create_table_vacancies(database_name, params: dict):
     conn.close()
 
 
-def load_table_employers(database_name, params: dict):
+
+def load_table_employers(database_name, params: dict, url=None):
     """Наполнение таблицы о работодателях из файла Employers.json."""
     with open('./data/Employers.json', 'r', encoding='utf-8') as file:
-        data = json.load(file)
-    conn = psycopg2.connect(f'dbname={database_name}', **params)
-    with conn.cursor() as cur:
-        for emp, emp_id in data.items():
-            cur.execute(
-                'INSERT INTO employers (employer_id, employer_name)'
-                'VALUES (%s, %s)', (emp_id, emp))
-            conn.commit()
-        conn.close()
+        data_emp = json.load(file)
+        for emp, employer_id in data_emp.items():
+            url = 'https://api.hh.ru/vacancies?area=113'
+            parametrs = {
+                'page': 0,
+                'per_page': 1
+            }
+            response = requests.get(f'{url}&employer_id={employer_id}', parametrs)
+            data_res = response.json()
+            conn = psycopg2.connect(f'dbname={database_name}', **params)
+            with conn.cursor() as cur:
+                for emp in data_res['items']:
+                    epm_id = emp['employer']['id']
+                    epm_name = emp['employer']['name']
+                    cur.execute(
+                    'INSERT INTO employers (employer_id, employer_name)'
+                    'VALUES (%s, %s)', (epm_id, epm_name))
+                conn.commit()
+            conn.close()
+
+
+
+
+
 
 
 def load_table_vacancies(database_name, params: dict, url=None):

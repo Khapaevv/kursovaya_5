@@ -2,6 +2,7 @@ import psycopg2
 from tabulate import tabulate
 
 class DBManager():
+    """Класс, который подключается к БД PostgreSQL"""
 
 
     def __init__(self, database_name, params: dict):
@@ -18,7 +19,6 @@ class DBManager():
                         FROM employers as q
                         JOIN vacancies as w ON q.employer_id = w.employer_id
                         GROUP BY q.employer_name
-                        
                         """)
             rows = cur.fetchall()
             conn.commit()
@@ -37,7 +37,6 @@ class DBManager():
                         SELECT q.employer_name, w.vacancy_name, w.salary, w.vacancy_url 
                         FROM employers as q
                         JOIN vacancies as w ON q.employer_id = w.employer_id
-
                         """)
             rows = cur.fetchall()
             conn.commit()
